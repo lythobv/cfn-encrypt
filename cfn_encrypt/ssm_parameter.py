@@ -18,8 +18,6 @@ def parameter_exist(name):
 def handler(event, context):
     logger = logging.getLogger("crypto_cfn")
     logger.setLevel(logging.DEBUG)
-    ch = logging.StreamHandler()
-    logger.addHandler(ch)
     name = event["ResourceProperties"]["Name"]
     value = None
 
