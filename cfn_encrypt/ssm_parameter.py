@@ -1,6 +1,7 @@
 import cfnresponse, logging, traceback, boto3
 from random import choice
 from string import ascii_uppercase, ascii_lowercase, digits
+from botocore.config import Config
 
 
 def parameter_exist(name):
@@ -23,6 +24,11 @@ def handler(event, context):
     name = event["ResourceProperties"]["Name"]
     value = None
 
+    config=Config(
+        retries=dict(
+            max_attempts=10
+        )
+    )
     try:
         if event["RequestType"] in ["Create", "Update"]:
             if event["RequestType"] == "Create" and parameter_exist(name):
@@ -56,7 +62,7 @@ def handler(event, context):
             if not value:
                 raise ValueError("Either generate a password or set a value")
 
-            response = boto3.client('ssm').put_parameter(
+            response = boto3.client('ssm', config=config).put_parameter(
                 Name=name,
                 Description=event["ResourceProperties"]["Description"],
                 Value=value,
