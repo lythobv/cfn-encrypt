@@ -5,6 +5,8 @@ from hmac import new as newkey
 from hashlib import sha256
 from base64 import b64encode
 
+from botocore.config import Config
+
 
 def parameter_exist(name):
     response = boto3.client('ssm').describe_parameters(
@@ -30,6 +32,11 @@ def handler(event, context):
     name = rp["Name"]
     value = None
 
+    config=Config(
+        retries=dict(
+            max_attempts=10
+        )
+    )
     try:
         if event["RequestType"] in ["Create", "Update"]:
             if event["RequestType"] == "Create" and parameter_exist(name):
@@ -73,7 +80,7 @@ def handler(event, context):
             if not value:
                 raise ValueError("Either generate a password or set a value")
 
-            response = boto3.client('ssm').put_parameter(
+            response = boto3.client('ssm', config=config).put_parameter(
                 Name=name,
                 Description=rp["Description"],
                 Value=value,
