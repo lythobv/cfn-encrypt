@@ -4,8 +4,6 @@ import cfnresponse, logging, traceback, boto3, base64
 def handler(event, context):
     logger = logging.getLogger("crypto_cfn")
     logger.setLevel(logging.DEBUG)
-    ch = logging.StreamHandler()
-    logger.addHandler(ch)
     try:
         args = dict()
 

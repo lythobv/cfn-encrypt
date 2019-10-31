@@ -26,8 +26,6 @@ def get_propertry(rp, name:str):
 def handler(event, context):
     logger = logging.getLogger("crypto_cfn")
     logger.setLevel(logging.DEBUG)
-    ch = logging.StreamHandler()
-    logger.addHandler(ch)
     rp = event["ResourceProperties"]
     name = rp["Name"]
     value = None
