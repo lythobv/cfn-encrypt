@@ -17,7 +17,7 @@ def parameter_exist(name):
     )
     return len(response["Parameters"]) > 0
 
-def get_propertry(rp, name:str=''):
+def get_propertry(rp, name:str):
     return rp[name] if name in rp else None
 
 
