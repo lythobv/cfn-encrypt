@@ -5,7 +5,7 @@ from cfn_encrypt import Encrypt, EncryptionContext, SecureParameter, GetSsmValue
 from troposphere import (Template, iam, GetAtt, Join, Ref, logs, Output, Sub, Parameter, awslambda,
                          Base64, Export)
 
-from sys import argv, exit
+from sys import argv
 
 do_example = False
 for arg in argv:
