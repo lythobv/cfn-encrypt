@@ -90,8 +90,8 @@ def handler(event, context):
             logger.info("Successfully stored parameter {}".format(name))
 
             cfnresponse.send(event, context, cfnresponse.SUCCESS, response, name)
-        else:
-            boto3.client('ssm').delete_parameter(
+        elif event["RequestType"] in ["Delete"]:
+            boto3.client('ssm', config=config).delete_parameter(
                 Name=event["PhysicalResourceId"],
             )
             logger.info("Successfully deleted parameter: {}".format(name))
@@ -100,7 +100,7 @@ def handler(event, context):
     except Exception as ex:
         logger.error("Failed to %s parameter: %s", event["RequestType"], name)
         logger.debug("Stack trace %s", traceback.format_exc())
-        if event["RequestType"] in ["Create", "Update"]:
+        if event["RequestType"] in ["Create", "Update", "Delete"]:
             cfnresponse.send(event, context, cfnresponse.FAILED, None, "0")
         else:
             cfnresponse.send(event, context, cfnresponse.SUCCESS, None, "0")
