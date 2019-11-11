@@ -6,6 +6,7 @@ from hashlib import sha256
 from base64 import b64encode
 
 from botocore.config import Config
+from botocore.exceptions import ClientError
 
 
 def parameter_exist(name):
@@ -91,9 +92,14 @@ def handler(event, context):
 
             cfnresponse.send(event, context, cfnresponse.SUCCESS, response, name)
         elif event["RequestType"] in ["Delete"]:
-            boto3.client('ssm', config=config).delete_parameter(
-                Name=event["PhysicalResourceId"],
-            )
+            try:
+                boto3.client('ssm', config=config).delete_parameter(
+                    Name=event["PhysicalResourceId"],
+                )
+            except ClientError as e:
+                if e.response['Error']['Code'] not in ['ParameterNotFound']:
+                    raise
+                pass
             logger.info("Successfully deleted parameter: {}".format(name))
             cfnresponse.send(event, context, cfnresponse.SUCCESS, None, name)
 
