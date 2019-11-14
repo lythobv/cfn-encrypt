@@ -20,7 +20,7 @@ def parameter_exist(name):
     )
     return len(response["Parameters"]) > 0
 
-def get_propertry(rp, name:str):
+def get_property(rp, name:str):
     return rp[name] if name in rp else None
 
 
@@ -41,16 +41,16 @@ def handler(event, context):
             if event["RequestType"] == "Create" and parameter_exist(name):
                 raise NameError("A Parameter named {} already exists".format(name))
 
-            generate_password = get_propertry(rp, "GeneratePassword")
-            value = get_propertry(rp, "Value")
+            generate_password = get_property(rp, "GeneratePassword")
+            value = get_property(rp, "Value")
 
             if value and generate_password in ['true', 'True', '1', True, 1]:
                 raise ValueError("Property Value and GeneratePassword cannot be used at the same time")
 
             if generate_password in ['true', 'True', '1', True, 1]:
 
-                password_length = get_propertry(rp, "GeneratePasswordLength")
-                allow_specials = get_propertry(rp, "GeneratePasswordAllowSpecialCharacters")
+                password_length = get_property(rp, "GeneratePasswordLength")
+                allow_specials = get_property(rp, "GeneratePasswordAllowSpecialCharacters")
                 if not password_length:
                     raise ValueError("The Resource property GeneratePasswordLength is required")
 
