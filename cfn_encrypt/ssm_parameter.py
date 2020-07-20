@@ -8,9 +8,14 @@ from base64 import b64encode
 from botocore.config import Config
 from botocore.exceptions import ClientError
 
+config=Config(
+    retries=dict(
+        max_attempts=10
+    )
+)
 
 def parameter_exist(name):
-    response = boto3.client('ssm').describe_parameters(
+    response = boto3.client('ssm', config=config).describe_parameters(
         ParameterFilters=[{
             'Key': 'Name',
             'Values': [
@@ -31,11 +36,6 @@ def handler(event, context):
     name = rp["Name"]
     value = None
 
-    config=Config(
-        retries=dict(
-            max_attempts=10
-        )
-    )
     try:
         if event["RequestType"] in ["Create", "Update"]:
             if event["RequestType"] == "Create" and parameter_exist(name):
